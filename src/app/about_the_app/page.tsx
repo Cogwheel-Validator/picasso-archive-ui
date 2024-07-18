@@ -1,6 +1,6 @@
 export default function Page() {
   return (
-    <>
+    <main className="bg-gradient-to-br from-purple-700 via-blue-800 to-teal-500 relative flex min-h-screen flex-col w-full">
     <section className="py-10 px-4">
     <div className="hero bg-base-200 min-h-screen">
       <div className="hero-content flex-col lg:flex-row-reverse">
@@ -59,6 +59,6 @@ export default function Page() {
         </div>
       </div>
     </section>
-    </>
+    </main>
   )
 }

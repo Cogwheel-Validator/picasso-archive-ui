@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, ChangeEvent, KeyboardEvent } from 'react';
+import React, { useState, useEffect, useCallback, ChangeEvent, KeyboardEvent } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import Table from '../../components/Table';
 import Pagination from '../../components/Pagination';
@@ -44,6 +44,7 @@ const SearchPage: React.FC = () => {
   const [isMobile, setIsMobile] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [cachedPages, setCachedPages] = useState<Record<number, Transaction[]>>({});
 
   useEffect(() => {
     const handleResize = () => {
@@ -54,44 +55,6 @@ const SearchPage: React.FC = () => {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-
-  const fetchTransactions = async () => {
-    if (!validateAddress()) return;
-
-    setIsLoading(true);
-    setError(null);
-    try {
-      const response = await fetch(`http://127.0.0.1:8000/account/${address.trim()}?page=${page}&page_size=${pageSize}`);
-      const data = await response.json();
-      if (response.ok) {
-        setTransactions(data.transactions);
-        setTotal(data.total);
-        if (data.transactions.length === 0) {
-          setError("No transactions found for this address.");
-        }
-      } else {
-        setError(data.detail || "An error occurred while fetching transactions.");
-      }
-    } catch (error) {
-      console.error('Error fetching transactions:', error);
-      setError("An error occurred while fetching transactions. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleAddressChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.slice(0, 43);
-    setAddress(value);
-    // Clear error when user starts typing again
-    if (error) setError(null);
-  };
-
-  const handleKeyPress = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      fetchTransactions();
-    }
-  };
 
   const validateAddress = (): boolean => {
     const trimmedAddress = address.trim();
@@ -108,6 +71,77 @@ const SearchPage: React.FC = () => {
       return false;
     }
     return true;
+  };
+
+  const fetchTransactions = useCallback(async (pageToFetch: number) => {
+    if (!validateAddress()) return;
+
+    setIsLoading(true);
+    setError(null);
+
+    // Check if the page is already cached
+    if (cachedPages[pageToFetch]) {
+      setTransactions(cachedPages[pageToFetch]);
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/account/${address.trim()}?page=${pageToFetch}&page_size=${pageSize}`);
+      const data = await response.json();
+      if (response.ok) {
+        setTransactions(data.transactions);
+        setTotal(data.total);
+        
+        // Cache the fetched page
+        setCachedPages(prev => {
+          const newCache = { ...prev, [pageToFetch]: data.transactions };
+          // Keep only the last 3 pages in cache
+          const pagesToKeep = Object.keys(newCache)
+            .map(Number)
+            .sort((a, b) => b - a)
+            .slice(0, 3);
+          return Object.fromEntries(
+            Object.entries(newCache).filter(([key]) => pagesToKeep.includes(Number(key)))
+          );
+        });
+
+        if (data.transactions.length === 0) {
+          setError("No transactions found for this address.");
+        }
+      } else {
+        setError(data.detail || "An error occurred while fetching transactions.");
+      }
+    } catch (error) {
+      console.error('Error fetching transactions:', error);
+      setError("An error occurred while fetching transactions. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [address, pageSize, validateAddress]);
+
+  const handleSearch = () => {
+    setPage(1);
+    setCachedPages({});
+    fetchTransactions(1);
+  };
+
+  const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.slice(0, 43);
+    setAddress(value);
+    // Clear error when user starts typing again
+    if (error) setError(null);
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
+
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage);
+    fetchTransactions(newPage);
   };
 
 
@@ -163,7 +197,7 @@ const SearchPage: React.FC = () => {
   );
 
   return (
-    <div className="min-h-screen w-auto bg-gradient-to-br from-purple-700 via-blue-800 to-teal-500">
+    <section className="min-h-screen w-auto bg-gradient-to-br from-purple-700 via-blue-800 to-teal-500">
       <div className="container mx-auto px-4 py-8">
         <div className="bg-base-100 rounded-lg shadow-lg p-6 mb-8">
           <h1 className="text-3xl font-bold mb-4">Search for the transaction</h1>
@@ -188,14 +222,28 @@ const SearchPage: React.FC = () => {
                   clipRule="evenodd" 
                 />
               </svg>
-            </label>
+              </label>
             <button 
               className="btn btn-md btn-primary w-full sm:w-auto" 
-              onClick={fetchTransactions}
+              onClick={handleSearch}
               disabled={isLoading}
             >
               {isLoading ? 'Searching...' : 'Search'}
             </button>
+            <select 
+              className="select select-bordered w-full sm:w-auto"
+              value={pageSize}
+              onChange={(e) => {
+                setPageSize(Number(e.target.value));
+                setPage(1);
+                setCachedPages({});
+              }}
+            >
+              <option value={10}>10 per page</option>
+              <option value={20}>20 per page</option>
+              <option value={50}>50 per page</option>
+              <option value={100}>100 per page</option>
+            </select>
           </div>
         </div>
 
@@ -208,7 +256,13 @@ const SearchPage: React.FC = () => {
           />
         )}
 
-        {transactions.length > 0 && (
+        {isLoading && (
+          <div className="flex justify-center items-center h-64">
+            <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-purple-500"></div>
+          </div>
+        )}
+
+        {!isLoading && transactions.length > 0 && (
           <div className="bg-base-100 rounded-lg shadow-lg p-6">
             {isMobile ? (
               <div>
@@ -260,30 +314,23 @@ const SearchPage: React.FC = () => {
                       </React.Fragment>
                     ))}
                   </Table.Body>
-                </Table>
+                  </Table>
               </div>
             )}
-            <div className="mt-4 flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
-              <select 
-                className="select select-bordered w-full sm:w-auto"
-                value={pageSize}
-                onChange={(e) => setPageSize(Number(e.target.value))}
-              >
-                <option value={10}>10 per page</option>
-                <option value={20}>20 per page</option>
-                <option value={50}>50 per page</option>
-                <option value={100}>100 per page</option>
-              </select>
+            <div className="mt-4 flex flex-col items-center space-y-4">
               <Pagination
                 currentPage={page}
                 totalPages={Math.ceil(total / pageSize)}
-                onPageChange={setPage}
+                onPageChange={handlePageChange}
               />
+              <div>
+                Showing page {page} of {Math.ceil(total / pageSize)} (Total transactions: {total})
+              </div>
             </div>
           </div>
         )}
       </div>
-    </div>
+    </section>
   );
 };
 

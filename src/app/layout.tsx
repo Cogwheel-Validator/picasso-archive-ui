@@ -77,26 +77,35 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
         <meta name="msapplication-TileColor" content="#da532c" />
         <meta name="msapplication-config" content="/favicons/browserconfig.xml" />
         <meta name="msapplication-TileImage" content="/favicons/mstile-150x150.png"/>
-      </head>
+        </head>
       <body>
-        <div className="min-h-screen bg-base-200 text-neutral-content">
+        <div className="min-h-screen bg-base-200 text-neutral-content flex flex-col">
           <header className="navbar bg-opacity-30 backdrop-blur-lg bg-secondary fixed top-0 z-10 w-full">
-            <div className="flex-1">
-              <Link href="/" className="btn btn-ghost normal-case text-xl">Picasso Archive</Link>
-            </div>
-            <div className="flex-none hidden md:block">
-              <ul className="menu menu-horizontal px-1 font-semibold text-lg">
-                <li><Link href="/">Home</Link></li>
-                <li><Link href="/search">Search</Link></li>
-                <li><Link href="/about_the_app">About the App</Link></li>
-              </ul>
-            </div>
-            <div className="md:hidden">
-              <ResponsiveMenu />
+            <div className="container mx-auto flex justify-between items-center">
+              <div className="flex items-center">
+              <Link href="/" className="flex items-center space-x-2 group">
+                <div className="transition-opacity duration-300 group-hover:opacity-80">
+                  <Image src="/PicaArchiveLogo.png" width={60} height={60} alt="Picasso Archive logo" />
+                </div>
+                <span className="font-semibold text-2xl transition-opacity duration-300 group-hover:opacity-80">
+                  Picasso Archive
+                </span>
+              </Link>
+              </div>
+              <div className="flex-none hidden md:block">
+                <ul className="menu menu-horizontal px-1 font-semibold text-lg">
+                  <li><Link href="/">Home</Link></li>
+                  <li><Link href="/search">Search</Link></li>
+                  <li><Link href="/about_the_app">About the App</Link></li>
+                </ul>
+              </div>
+              <div className="md:hidden">
+                <ResponsiveMenu />
+              </div>
             </div>
           </header>
 
-          <main className="container mx-auto px-4 pt-16">
+          <main className="flex-grow w-full pt-16">
             {children}
           </main>
 

@@ -34,23 +34,29 @@ export default function Home() {
   ]
   return (
     <>
-      <div className="hero min-h-screen w-screen relative left-1/2 right-1/2 mx-[-50vw]"
-      style={{
-        backgroundImage: "url(./background_1920x1080.jpg)",
-      }}>
+    <div className="w-full">
+      <div 
+        className="hero min-h-screen bg-cover bg-center"
+        style={{
+          backgroundImage: "url(./background_1920x1080.jpg)",
+        }}
+      >
         <div className="hero-overlay bg-opacity-30"></div>
         <div className="hero-content text-center text-neutral-content">
-        <div className="max-w-md">
+          <div className="max-w-md">
             <h1 className="mb-5 text-5xl font-bold">Picasso Archive</h1>
             <p className="mb-5">
               Picasso chain has evolved already a couple of times and it doesn't intend to stop.
               Picasso archive app is here to enable all of the Picasso users to look into their
               transactions prior to address prefix change.
             </p>
-            <Link href="/search" className="btn btn-primary border-secondary">Search for transactions</Link>
+            <Link href="/search" className="btn btn-primary border-secondary">
+              Search for transactions
+            </Link>
           </div>
         </div>
       </div>
+    </div>
 
       <section className="py-10 px-4">
         <h2 className="text-3xl font-bold text-center mb-8">How does it work?</h2>

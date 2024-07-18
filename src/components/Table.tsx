@@ -43,13 +43,14 @@ const Row: React.FC<RowProps> = ({ children, isExpanded }) => {
 interface CellProps {
   children: ReactNode;
   header?: boolean;
+  colSpan?: number;
 }
 
-const Cell: React.FC<CellProps> = ({ children, header }) => {
+const Cell: React.FC<CellProps> = ({ children, header, colSpan }) => {  
   return header ? (
-    <th className="px-4 py-2 text-left font-semibold">{children}</th>
+    <th className="px-4 py-2 text-left font-semibold" colSpan={colSpan}>{children}</th>
   ) : (
-    <td className="px-4 py-2">{children}</td>
+    <td className="px-4 py-2" colSpan={colSpan}>{children}</td>
   );
 };
 

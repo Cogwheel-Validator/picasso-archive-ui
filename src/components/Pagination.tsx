@@ -9,32 +9,45 @@ interface PaginationProps {
 }
 
 const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPageChange }) => {
-  const pageNumbers: number[] = [];
-  for (let i = 1; i <= Math.min(totalPages, 5); i++) {
-    pageNumbers.push(i);
+  const pageNumbers = [];
+  const maxVisiblePages = 5;
+
+  if (totalPages <= maxVisiblePages) {
+    for (let i = 1; i <= totalPages; i++) {
+      pageNumbers.push(i);
+    }
+  } else {
+    if (currentPage <= 3) {
+      for (let i = 1; i <= maxVisiblePages; i++) {
+        pageNumbers.push(i);
+      }
+    } else if (currentPage >= totalPages - 2) {
+      for (let i = totalPages - maxVisiblePages + 1; i <= totalPages; i++) {
+        pageNumbers.push(i);
+      }
+    } else {
+      for (let i = currentPage - 2; i <= currentPage + 2; i++) {
+        pageNumbers.push(i);
+      }
+    }
   }
 
   return (
     <div className="join">
-      {pageNumbers.map((number) => (
+      {currentPage > 1 && (
+        <button className="join-item btn" onClick={() => onPageChange(currentPage - 1)}>«</button>
+      )}
+      {pageNumbers.map(number => (
         <button
           key={number}
-          className={`join-item btn btn-square ${currentPage === number ? 'btn-active' : ''}`}
+          className={`join-item btn ${currentPage === number ? 'btn-active' : ''}`}
           onClick={() => onPageChange(number)}
         >
           {number}
         </button>
       ))}
-      {totalPages > 5 && (
-        <>
-          <button className="join-item btn btn-square btn-disabled">...</button>
-          <button
-            className={`join-item btn btn-square ${currentPage === totalPages ? 'btn-active' : ''}`}
-            onClick={() => onPageChange(totalPages)}
-          >
-            {totalPages}
-          </button>
-        </>
+      {currentPage < totalPages && (
+        <button className="join-item btn" onClick={() => onPageChange(currentPage + 1)}>»</button>
       )}
     </div>
   );
