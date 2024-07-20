@@ -34,7 +34,7 @@ export default function Home() {
   ]
   return (
     <>
-    <div className="w-full">
+    <section className="w-full">
       <div 
         className="hero min-h-screen bg-cover bg-center"
         style={{
@@ -56,7 +56,7 @@ export default function Home() {
           </div>
         </div>
       </div>
-    </div>
+    </section>
 
       <section className="py-10 px-4">
         <h2 className="text-3xl font-bold text-center mb-8">How does it work?</h2>

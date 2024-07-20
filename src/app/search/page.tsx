@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback, ChangeEvent, KeyboardEvent } from 'react';
+import React, { useState, useEffect, useCallback, useMemo,ChangeEvent, KeyboardEvent } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import Table from '../../components/Table';
 import Pagination from '../../components/Pagination';
@@ -72,20 +72,22 @@ const SearchPage: React.FC = () => {
     }
     return true;
   };
+  
+  const memoizedCachedPages = useMemo(() => cachedPages, [cachedPages]);
 
   const fetchTransactions = useCallback(async (pageToFetch: number) => {
     if (!validateAddress()) return;
-
+    
     setIsLoading(true);
     setError(null);
-
+    
     // Check if the page is already cached
-    if (cachedPages[pageToFetch]) {
-      setTransactions(cachedPages[pageToFetch]);
+    if (memoizedCachedPages[pageToFetch]) {
+      setTransactions(memoizedCachedPages[pageToFetch]);
       setIsLoading(false);
       return;
     }
-
+    
     try {
       const response = await fetch(`http://127.0.0.1:8000/account/${address.trim()}?page=${pageToFetch}&page_size=${pageSize}`);
       const data = await response.json();
@@ -105,7 +107,7 @@ const SearchPage: React.FC = () => {
             Object.entries(newCache).filter(([key]) => pagesToKeep.includes(Number(key)))
           );
         });
-
+        
         if (data.transactions.length === 0) {
           setError("No transactions found for this address.");
         }
@@ -118,7 +120,7 @@ const SearchPage: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [address, pageSize, validateAddress]);
+  }, [address, pageSize, validateAddress, memoizedCachedPages]);
 
   const handleSearch = () => {
     setPage(1);

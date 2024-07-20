@@ -13,7 +13,7 @@ const ExplorerButton: React.FC<ExplorerButtonProps> = ({ txHash }) => {
       href={`https://ping.pub/picasso/tx/${txHash}`}
       target="_blank"
       rel="noopener noreferrer"
-      className="btn btn-md bg-purple-600 hover:bg-purple-700 text-lg font-bold text-white rounded-full flex items-center"
+      className="btn btn-md bg-green-800 hover:bg-green-900 text-lg font-bold text-white rounded-full flex items-center"
     >
       <Image
         src="/ping.png"
