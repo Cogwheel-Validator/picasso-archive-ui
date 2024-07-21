@@ -53,7 +53,10 @@ export const metadata: Metadata = {
     ],
   },
   openGraph: {
-    title: 'Picasso Archive',
+    title: {
+      default: 'Picasso Archive',
+      template: '%s | Picasso Archive',
+    },
     description: `Search for your transactions on the Picasso chain prior to
       the address prefix changes to the address.`,
     url: baseUrl,
