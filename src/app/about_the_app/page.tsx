@@ -52,7 +52,8 @@ export default function Page() {
               Unfortunately there was no way to find all transactions that had occurred when address
               changed prefix in the chain. They were stored and executed on the chain but without heavy
               modification to the chain or creating some specialized explorer or app that would show this
-              data there was no way to do query old data. So we create Picasso Archive a <b>"lite" explorer</b>.
+              data there was no way to do query old data. So we create Picasso Archive a 
+              <b>&quot;lite&quot; explorer</b>.
             </p>
           </div>
         </div>
@@ -68,13 +69,13 @@ export default function Page() {
               <p>
                 Picasso Archive is a lite explorer that shows only basic data tied to your
                 address. For example your address, amount of tokens sent, block height, time, date etc.
-                What this app won't show is all of the data from the transactions. So it will only
+                What this app won&apos;t show is all of the data from the transactions. So it will only
                 show the essentials.<br/>
               </p>
               <p>
                 What we did is we collected data from the start of the blockchain all up to the block height
                 5079000 (from June 6th 2023 to May 8th 2024) and have all of the 
-                transactions and essential data stored into a database. Hence the use of term "lite" 
+                transactions and essential data stored into a database. Hence the use of term lite 
                 explorer.<br/>
                 Any transaction you want to look into more details you will be redirected to the Ping.Pub
                 where you can see more details about the transaction.

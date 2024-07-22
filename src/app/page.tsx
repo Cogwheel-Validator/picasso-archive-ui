@@ -18,18 +18,18 @@ export default function Home() {
   const steps = [
     {
       text: "Type in your pica address into the search bar and press the search button.",
-      image: "/fullLogo.png",
+      image: "/home-img-1.png",
       alt: "Search bar illustration"
     },
     {
       text: "You will then get a list of all transactions that had occurred when address prefix were banksy or centauri.",
-      image: "/fullLogo.png",
+      image: "/home-img-2.png",
       alt: "Transaction list illustration"
     },
     {
-      text: "Press on the arrow to get redirected to the explorer to see more info about the transaction.",
-      image: "/fullLogo.png",
-      alt: "Explorer redirect illustration"
+      text: "Press on the Ping.Pub button to get more information about the transaction.",
+      image: "/home-img-3.png",
+      alt: "Explorer ping.pub button"
     }
   ]
   return (
@@ -46,7 +46,7 @@ export default function Home() {
           <div className="max-w-md">
             <h1 className="mb-5 text-5xl font-bold">Picasso Archive</h1>
             <p className="mb-5">
-              Picasso chain has evolved already a couple of times and it doesn't intend to stop.
+              Picasso chain has evolved already a couple of times and it doesn&apos;t intend to stop.
               Picasso archive app is here to enable all of the Picasso users to look into their
               transactions prior to address prefix change.
             </p>
@@ -59,8 +59,8 @@ export default function Home() {
     </section>
 
       <section className="py-10 px-4">
-        <h2 className="text-3xl font-bold text-center mb-8">How does it work?</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <h2 className="text-3xl font-bold text-center mb-8">How to use this App?</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 shadow-md">
           {steps.map((step, index) => (
             <div 
               key={index} 
