@@ -14,6 +14,7 @@ import Pagination from "../../components/Pagination";
 import ExplorerButton from "../../components/ExplorerBtn";
 import Alert from "../../components/Alert";
 import { format, fromZonedTime, toZonedTime } from "date-fns-tz";
+import { collectApiConfig } from '../../components/ApiConfig';
 
 interface Transaction {
   id: string;
@@ -87,7 +88,7 @@ const SearchPage: React.FC = () => {
   };
 
   const memoizedCachedPages = useMemo(() => cachedPages, [cachedPages]);
-
+  
   const fetchTransactions = useCallback(
     async (pageToFetch: number) => {
       if (!validateAddress()) return;
@@ -103,8 +104,14 @@ const SearchPage: React.FC = () => {
       }
 
       try {
+        const apiConfig = await collectApiConfig();
         const response = await fetch(
-          `http://127.0.0.1:8001/account/${address.trim()}?page=${pageToFetch}&page_size=${pageSize}`
+          `${apiConfig.apiUrl}/account/${address.trim()}?page=${pageToFetch}&page_size=${pageSize}`,
+          {
+            headers: new Headers({
+              'X-API-Key': apiConfig.apiKey || '',
+            }),
+          }
         );
         const data = await response.json();
         if (response.ok) {

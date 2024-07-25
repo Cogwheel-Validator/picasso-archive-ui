@@ -46,7 +46,6 @@ export default function Home() {
           <div className="max-w-md">
             <h1 className="mb-5 text-5xl font-bold">Picasso Archive</h1>
             <p className="mb-5">
-              Picasso chain has evolved already a couple of times and it doesn&apos;t intend to stop.
               Picasso archive app is here to enable all of the Picasso users to look into their
               transactions prior to address prefix change.
             </p>
